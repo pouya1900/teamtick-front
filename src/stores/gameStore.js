@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
-import { useLocalStorage } from '@vueuse/core'
+import {defineStore} from 'pinia'
+import {useLocalStorage} from '@vueuse/core'
 import axios from 'axios'
-import { computed, ref } from 'vue'
+import {computed, ref} from 'vue'
 
 const API_URL = 'http://localhost:8000/api'
 
@@ -26,6 +26,13 @@ export const useGameStore = defineStore('game', () => {
 
     const roundTurns = ref([])
     const currentTurnElapsedSeconds = ref(0)
+
+    const gameWinner = computed(() => gameData.value?.winner ?? null)
+
+    const isGameFinished = computed(() => {
+        return gameData.value?.status === 'finished' || !!gameWinner.value
+    })
+
     const hasActiveGame = () => {
         return gameData.value !== null && gameData.value.status !== 'finished'
     }
@@ -135,7 +142,7 @@ export const useGameStore = defineStore('game', () => {
         if (!gameData.value) return
 
         try {
-            const response = await axios.post(`${API_URL}/games/${gameData.value.id}/rounds`, { turns })
+            const response = await axios.post(`${API_URL}/games/${gameData.value.id}/rounds`, {turns})
             gameData.value = response.data.data.game
             return true
         } catch (error) {
@@ -332,5 +339,7 @@ export const useGameStore = defineStore('game', () => {
         startRound,
         stopRoundTimer,
         finishRound,
+        gameWinner,
+        isGameFinished,
     }
 })

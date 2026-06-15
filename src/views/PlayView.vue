@@ -43,6 +43,8 @@ const roundProgress = computed(() => {
   return ((roundDuration.value - roundRemainingSeconds.value) / roundDuration.value) * 100
 })
 
+const isGameFinished = computed(() => gameStore.isGameFinished)
+
 const getSlotStyle = (slotIndex, total) => {
   const angle = (360 / total) * slotIndex - 90
   const rad = (angle * Math.PI) / 180
@@ -143,12 +145,21 @@ const handleCenterTap = async () => {
     await updateStressAudio()
     return
   }
-  successAudio.value.volume=0.4
+  successAudio.value.volume = 0.4
   successAudio.value?.play()
   gameStore.moveToNextTurn()
   startSwitchCooldown()
 }
 
+watch(
+    () => isGameFinished.value,
+    (finished) => {
+      if (finished) {
+        router.replace({name: 'winner'})
+      }
+    },
+    {immediate: true}
+)
 const goBack = () => {
   router.back()
 }
@@ -239,6 +250,9 @@ onBeforeUnmount(() => {
         </div>
       </div>
     </div>
+    <div class="round-wrap">
+      <span>دور {{gameStore.gameData?.current_round_number + '/' + gameStore.gameData?.settings?.rounds_count}}</span>
+    </div>
 
     <div class="arena-wrap play-arena-wrap">
       <div class="arena-ring play-arena-ring">
@@ -274,7 +288,6 @@ onBeforeUnmount(() => {
                 <circle cx="12" cy="8" r="4"/>
                 <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
               </svg>
-              <span class="slot-number">{{ slot.player_index + 1 }}</span>
             </div>
 
             <span class="player-name play-player-name">
