@@ -2,18 +2,22 @@
 import {reactive, ref, computed} from 'vue'
 import {useRouter} from 'vue-router'
 import {useGameStore} from '../stores/gameStore'
+import {useLocaleStore} from '../stores/localeStore'
 import {onMounted} from 'vue'
+import {useI18n} from 'vue-i18n'
 
+const {t} = useI18n()
 const router = useRouter()
 const gameStore = useGameStore()
+const localeStore = useLocaleStore()
 
 const isLoading = ref(false)
 const errorMessage = ref('')
 
 const teams = reactive(
     history.state?.teams ?? [
-      {name: 'تیم قرمز', color_hex: '#EF4444', players: ['علی', 'رضا']},
-      {name: 'تیم آبی', color_hex: '#3B82F6', players: ['سارا', 'مینا']},
+      {name: t('team.red'), color_hex: '#EF4444', players: [t('team.players.0'), t('team.players.1')]},
+      {name: t('team.blue'), color_hex: '#3B82F6', players: [t('team.players.2'), t('team.players.3')]},
     ]
 )
 
@@ -21,7 +25,7 @@ const formData = reactive({
   rounds_count: 5,
   turn_duration: 60,
   difficulty: 'medium',
-  language: 'fa',
+  language: localeStore.currentLocale,
   category_ids: [],
   teams,
 })
@@ -29,13 +33,10 @@ const formData = reactive({
 const roundOptions = [3, 5, 7]
 const timeOptions = [45, 60, 90]
 const diffOptions = [
-  {value: 'easy', label: 'آسان'},
-  {value: 'medium', label: 'متوسط'},
-  {value: 'hard', label: 'سخت'},
-]
-const langOptions = [
-  {value: 'fa', label: 'فارسی'},
-  {value: 'en', label: 'English'},
+  {value: 'easy', label: t('setting.difficulty.easy')},
+  {value: 'medium', label: t('setting.difficulty.medium')},
+  {value: 'hard', label: t('setting.difficulty.hard')},
+  {value: 'all', label: t('setting.difficulty.all')},
 ]
 
 onMounted(() => {
@@ -57,13 +58,13 @@ const isCatSelected = (id) => formData.category_ids.includes(id)
 
 const submitForm = async () => {
   if (formData.category_ids.length === 0) {
-    errorMessage.value = 'حداقل یک دسته‌بندی باید انتخاب شود.'
+    errorMessage.value = t('errors.CATEGORY_NOT_SELECTED')
     return
   }
   for (const team of formData.teams) {
     const valid = team.players.filter(p => p.trim() !== '')
     if (valid.length !== 2) {
-      errorMessage.value = `${team.name} باید ۲ بازیکن داشته باشد.`
+      errorMessage.value = t('errors.TEAM_NEEDS_TWO_PLAYER', {n: team.name})
       return
     }
     team.players = valid
@@ -76,7 +77,7 @@ const submitForm = async () => {
     await gameStore.createGame(formData)
     await router.push({name: 'play-game'})
   } catch (error) {
-    errorMessage.value = error?.response?.data?.message ?? 'خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.'
+    errorMessage.value = error?.response?.data?.message ?? t('error.GENERIC')
     console.error(error)
   } finally {
     isLoading.value = false
@@ -85,12 +86,11 @@ const submitForm = async () => {
 </script>
 
 <template>
-  <div class="screen" dir="rtl">
+  <div class="screen">
     <div class="bg-layer"></div>
     <div class="bg-overlay"></div>
 
     <main class="panel">
-      <!-- هدر -->
       <header class="page-header">
         <button class="back-btn" @click="router.back()" aria-label="برگشت">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -98,42 +98,39 @@ const submitForm = async () => {
           </svg>
         </button>
         <div class="page-icon">⚙️</div>
-        <h1 class="page-title">تنظیمات بازی</h1>
-        <p class="page-subtitle">تنظیمات دلخواه خود را انتخاب کنید</p>
+        <h1 class="page-title">{{ t('setting.game_settings') }}</h1>
+        <p class="page-subtitle">{{ t('setting.game_settings_desc') }}</p>
       </header>
 
       <div class="panel-body">
-        <!-- تعداد دور -->
         <div class="setting-row">
-          <div class="setting-label"><span>🏆</span><span>تعداد دور</span></div>
+          <div class="setting-label"><span>🏆</span><span>{{ t('setting.round_count') }}</span></div>
           <div class="pill-group">
             <button
                 v-for="n in roundOptions" :key="n"
                 class="pill-btn" :class="{ active: formData.rounds_count === n }"
                 @click="formData.rounds_count = n"
-            >{{ n }} دور
+            >{{ n }} {{ t('setting.rounds') }}
             </button>
           </div>
         </div>
         <div class="divider"></div>
 
-        <!-- زمان -->
         <div class="setting-row">
-          <div class="setting-label"><span>⏱️</span><span>زمان هر دور</span></div>
+          <div class="setting-label"><span>⏱️</span><span>{{ t('setting.round_time') }}</span></div>
           <div class="pill-group">
             <button
-                v-for="t in timeOptions" :key="t"
-                class="pill-btn" :class="{ active: formData.turn_duration === t }"
-                @click="formData.turn_duration = t"
-            >{{ t }} ثانیه
+                v-for="time in timeOptions" :key="time"
+                class="pill-btn" :class="{ active: formData.turn_duration === time }"
+                @click="formData.turn_duration = time"
+            >{{ time }} {{ t('setting.second') }}
             </button>
           </div>
         </div>
         <div class="divider"></div>
 
-        <!-- سختی -->
         <div class="setting-row">
-          <div class="setting-label"><span>📊</span><span>درجه سختی</span></div>
+          <div class="setting-label"><span>📊</span><span>{{ t('setting.difficulty_level') }}</span></div>
           <div class="pill-group">
             <button
                 v-for="d in diffOptions" :key="d.value"
@@ -145,25 +142,11 @@ const submitForm = async () => {
         </div>
         <div class="divider"></div>
 
-        <!-- زبان -->
-        <div class="setting-row">
-          <div class="setting-label"><span>🌐</span><span>زبان بازی</span></div>
-          <div class="pill-group">
-            <button
-                v-for="l in langOptions" :key="l.value"
-                class="pill-btn" :class="{ active: formData.language === l.value }"
-                @click="formData.language = l.value"
-            >{{ l.label }}
-            </button>
-          </div>
-        </div>
-        <div class="divider"></div>
 
-        <!-- دسته‌بندی -->
         <div class="cat-section">
           <div class="cat-header">
             <span>✨</span>
-            <span class="cat-title">انتخاب دسته‌بندی <small>(حداکثر ۲۰ مورد)</small></span>
+            <span class="cat-title">{{ t('setting.select_category') }}</span>
             <span class="cat-count">{{ catCount }} / 20</span>
           </div>
           <div v-if="gameStore.categoriesLoading" class="cat-loading">
@@ -177,7 +160,7 @@ const submitForm = async () => {
                 :aria-pressed="isCatSelected(cat.id)"
             >
               <span class="cat-emoji">{{ cat.icon }}</span>
-              <span class="cat-label">{{ cat.name_fa }}</span>
+              <span class="cat-label">{{ localeStore.localized(cat, 'name') }}</span>
               <span v-if="isCatSelected(cat.id)" class="cat-check">✓</span>
             </button>
           </div>

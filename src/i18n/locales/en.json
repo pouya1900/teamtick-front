@@ -1,0 +1,79 @@
+{
+  "common": {
+    "back": "Back",
+    "loading": "Loading...",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "player": "Player",
+    "teams": "Teams",
+    "edit": "Edit",
+    "save": "Save"
+  },
+  "home": {
+    "title": "team tick",
+    "subtitle": "A fun-filled gathering game",
+    "resume_game": "Continue Current Game",
+    "round_number": "Round {n}",
+    "new_game": "Start New Game",
+    "clear_confirm": "Your current game will be deleted. Are you sure?"
+  },
+  "play": {
+    "round_end": "Round Over",
+    "round": "Round",
+    "start": "Start",
+    "switch_word": "Switch Word",
+    "switch_active_after": "Available after round starts",
+    "switch_cooldown": "Switch in {n}s"
+  },
+  "setup": {
+    "start": "Start Game",
+    "start_desc": "Build your team and get ready to compete!",
+    "select_team_count": "Select Team Count",
+    "player_name": "Player Name",
+    "player_name_desc": "Type the player's name..."
+  },
+  "winner": {
+    "winner": "Winner",
+    "champion": "Game Champion",
+    "won": "wins!",
+    "description": "The game ended gloriously and the trophy goes to {name}.",
+    "new_game": "New Game",
+    "go_home": "Back Home"
+  },
+  "errors": {
+    "GAME_NOT_FOUND": "Game not found.",
+    "ROUND_LIMIT_REACHED": "Round limit reached.",
+    "GENERIC": "Something went wrong. Please try again.",
+    "CATEGORY_NOT_SELECTED": "At least one category must be selected.",
+    "TEAM_NEEDS_TWO_PLAYER": "{n} needs 2 players."
+  },
+  "team": {
+    "red": "Red Team",
+    "blue": "Blue Team",
+    "green": "Green Team",
+    "players_name": [
+      "Alice",
+      "Bob",
+      "Charlie",
+      "Diana",
+      "Eve",
+      "Frank"
+    ]
+  },
+  "setting": {
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "all": "All"
+    },
+    "select_category": "Select Category",
+    "game_settings": "Game Settings",
+    "game_settings_desc": "Customize your game setting!",
+    "round_count": "Round Count",
+    "round_time": "Round Time",
+    "second": "second",
+    "rounds": "rounds",
+    "difficulty_level": "Difficulty Level"
+  }
+}

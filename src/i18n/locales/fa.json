@@ -1,0 +1,79 @@
+{
+  "common": {
+    "back": "برگشت",
+    "loading": "در حال بارگذاری...",
+    "confirm": "تایید",
+    "cancel": "انصراف",
+    "player": "بازیکن",
+    "teams": "تیم",
+    "edit": "ویرایش",
+    "save": "ذخیره"
+  },
+  "home": {
+    "title": "بازی دور",
+    "subtitle": "یک دورهمی پر از هیجان و خنده",
+    "resume_game": "ادامه بازی فعلی",
+    "round_number": "راند {n}",
+    "new_game": "شروع بازی جدید",
+    "clear_confirm": "بازی فعلی شما پاک می‌شود. مطمئن هستید؟"
+  },
+  "play": {
+    "round_end": "پایان دور",
+    "round": "دور",
+    "start": "شروع",
+    "switch_word": "تعویض کلمه",
+    "switch_active_after": "بعد از شروع دور فعال می‌شود",
+    "switch_cooldown": "تعویض تا {n} ثانیه"
+  },
+  "setup": {
+    "start": "شروع بازی",
+    "start_desc": "تیم خود را بساز و آماده ی رقابت باش!",
+    "select_team_count": "انتخاب تعداد تیم",
+    "player_name": "نام بازیکن",
+    "player_name_desc": "اسم بازیکن رو بنویس..."
+  },
+  "winner": {
+    "winner": "برنده",
+    "champion": "قهرمان بازی",
+    "won": "برنده شد",
+    "description": "این دور با افتخار به پایان رسید و جام قهرمانی به {name} رسید.",
+    "new_game": "بازی جدید",
+    "go_home": "بازگشت به خانه"
+  },
+  "errors": {
+    "GAME_NOT_FOUND": "بازی موردنظر یافت نشد.",
+    "ROUND_LIMIT_REACHED": "تعداد دورها به پایان رسیده.",
+    "GENERIC": "خطایی رخ داده. دوباره تلاش کنید.",
+    "CATEGORY_NOT_SELECTED": "حداقل یک دسته بندی باید انتخاب شود.",
+    "TEAM_NEEDS_TWO_PLAYER": "{n} باید ۲ بازیکن داشته باشد."
+  },
+  "team": {
+    "red": "تیم قرمز",
+    "blue": "تیم آبی",
+    "green": "تیم سبز",
+    "players_name": [
+      "رضا",
+      "سارا",
+      "علی",
+      "مریم",
+      "حسین",
+      "فاطمه"
+    ]
+  },
+  "setting": {
+    "difficulty": {
+      "easy": "آسان",
+      "medium": "متوسط",
+      "hard": "سخت",
+      "all": "همه"
+    },
+    "select_category": "انتخاب دسته بندی",
+    "game_settings": "تنظیمات بازی",
+    "game_settings_desc": "تنظیمات دلخواه خود را انتخاب کنید",
+    "round_count": "تعداد دور",
+    "round_time": "زمان هر دور",
+    "second": "ثانیه",
+    "rounds": "دور",
+    "difficulty_level": "درجه سختی"
+  }
+}

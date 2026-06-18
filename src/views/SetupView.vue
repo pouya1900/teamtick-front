@@ -1,24 +1,26 @@
 <script setup>
 import {reactive, ref, computed} from 'vue'
 import {useRouter} from 'vue-router'
+import {useI18n} from 'vue-i18n'
 
+const {t} = useI18n()
 const router = useRouter()
-
 const teamCount = ref(2)
 const editingPlayer = reactive({teamIndex: null, playerIndex: null})
 const editingName = ref('')
 const showSheet = ref(false)
+const errorMessage = ref('')
 
 const TEAM_COLORS = {
-  0: {hex: '#EF4444', glow: 'rgba(239,68,68,0.55)', label: 'تیم قرمز'},
-  1: {hex: '#3B82F6', glow: 'rgba(59,130,246,0.55)', label: 'تیم آبی'},
-  2: {hex: '#10B981', glow: 'rgba(16,185,129,0.55)', label: 'تیم سبز'},
+  0: {hex: '#EF4444', glow: 'rgba(239,68,68,0.55)', label: t('team.red')},
+  1: {hex: '#3B82F6', glow: 'rgba(59,130,246,0.55)', label: t('team.blue')},
+  2: {hex: '#10B981', glow: 'rgba(16,185,129,0.55)', label: t('team.green')},
 }
 
 const teams = reactive([
-  {name: 'تیم قرمز', color_hex: '#EF4444', players: ['', '', '', '']},
-  {name: 'تیم آبی', color_hex: '#3B82F6', players: ['', '', '', '']},
-  {name: 'تیم سبز', color_hex: '#10B981', players: ['', '', '', '']},
+  {name: t('team.red'), color_hex: '#EF4444', players: ['', '']},
+  {name: t('team.blue'), color_hex: '#3B82F6', players: ['', '']},
+  {name: t('team.green'), color_hex: '#10B981', players: ['', '']},
 ])
 
 const activePlayers = computed(() => {
@@ -70,32 +72,43 @@ const savePlayerName = () => {
 }
 
 const goToSettings = () => {
+
+  for (const team of teams.slice(0, teamCount.value)) {
+    const valid = team.players.filter(p => p.trim() !== '')
+    if (valid.length !== 2) {
+      errorMessage.value = t('errors.TEAM_NEEDS_TWO_PLAYER', {n: team.name})
+      return
+    }
+  }
+
+  errorMessage.value = ''
+
   router.push({
     name: 'create-game',
-    state: {teams: JSON.parse(JSON.stringify(teams.slice(0,teamCount.value))), teamCount: teamCount.value}
+    state: {teams: JSON.parse(JSON.stringify(teams.slice(0, teamCount.value))), teamCount: teamCount.value}
   })
 }
 </script>
 
 <template>
-  <div class="screen" @click.self="showSheet && (showSheet = false)" dir="rtl">
+  <div class="screen" @click.self="showSheet && (showSheet = false)">
     <div class="bg-layer"></div>
     <div class="bg-overlay"></div>
 
     <header class="page-header">
       <div class="page-icon">👑</div>
-      <h1 class="page-title">شروع بازی</h1>
-      <p class="page-subtitle">تیم خود را بساز و آماده‌ی رقابت باش!</p>
+      <h1 class="page-title">{{ t('setup.start') }}</h1>
+      <p class="page-subtitle">{{ t('setup.start_desc') }}</p>
     </header>
 
     <div class="team-count-selector">
-      <span class="selector-label">انتخاب تعداد تیم</span>
+      <span class="selector-label">{{ t('setup.select_team_count') }}</span>
       <div class="pill-group">
         <button
             v-for="n in [2, 3]" :key="n"
             class="pill-btn" :class="{ active: teamCount === n }"
             @click="teamCount = n"
-        >{{ n }} تیم
+        >{{ n }} {{ t('common.teams') }}
         </button>
       </div>
     </div>
@@ -123,9 +136,10 @@ const goToSettings = () => {
             <span class="slot-number">{{ slot.playerIndex + 1 }}</span>
           </div>
           <span class="player-name">
-            {{ teams[slot.teamIndex].players[slot.playerIndex] || 'نام بازیکن' }}
+            {{ teams[slot.teamIndex].players[slot.playerIndex] || t('setup.player_name') }}
           </span>
-          <button class="edit-btn" aria-label="ویرایش" @click.stop="openEdit(slot.teamIndex, slot.playerIndex)">
+          <button class="edit-btn" :aria-label="t('common.edit')"
+                  @click.stop="openEdit(slot.teamIndex, slot.playerIndex)">
             <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -146,7 +160,13 @@ const goToSettings = () => {
       </div>
     </div>
 
+    <div>
+
+    </div>
     <div class="footer-action">
+      <Transition name="fade-err">
+        <p v-if="errorMessage" class="error-msg" role="alert">{{ errorMessage }}</p>
+      </Transition>
       <button class="btn-continue" @click="goToSettings">
         ادامه <span class="btn-arrow">›</span>
       </button>
@@ -157,7 +177,7 @@ const goToSettings = () => {
         <div class="bottom-sheet" role="dialog" aria-modal="true">
           <div class="sheet-handle"></div>
           <h3 class="sheet-title">
-            نام بازیکن
+            {{ t('setup.player_name') }}
             <span
                 v-if="editingPlayer.teamIndex !== null"
                 class="sheet-team-badge"
@@ -169,12 +189,11 @@ const goToSettings = () => {
               v-model="editingName"
               type="text"
               class="sheet-input"
-              placeholder="اسم بازیکن رو بنویس..."
+              :placeholder="t('setup.player_name_desc')"
               @keyup.enter="savePlayerName"
-              dir="rtl"
               autocomplete="off"
           />
-          <button class="sheet-save-btn" @click="savePlayerName">ذخیره</button>
+          <button class="sheet-save-btn" @click="savePlayerName">{{ t('common.save')}}</button>
         </div>
       </div>
     </Transition>

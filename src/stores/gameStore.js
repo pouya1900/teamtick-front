@@ -3,9 +3,11 @@ import {useLocalStorage} from '@vueuse/core'
 import axios from 'axios'
 import {computed, ref} from 'vue'
 
-const API_URL = 'http://localhost:8000/api'
+import apiClient from '../api/axios'
+import {useI18n} from 'vue-i18n'
 
 export const useGameStore = defineStore('game', () => {
+    const {t} = useI18n()
     const gameData = useLocalStorage('game_data', null)
     const words = useLocalStorage('game_words', [])
     const usedWordIds = useLocalStorage('game_used_words', [])
@@ -118,7 +120,7 @@ export const useGameStore = defineStore('game', () => {
 
     const createGame = async (payload) => {
         try {
-            const response = await axios.post(`${API_URL}/games`, payload)
+            const response = await apiClient.post(`/games`, payload)
             const data = response.data.data
 
             gameData.value = data.game
@@ -142,7 +144,7 @@ export const useGameStore = defineStore('game', () => {
         if (!gameData.value) return
 
         try {
-            const response = await axios.post(`${API_URL}/games/${gameData.value.id}/rounds`, {turns})
+            const response = await apiClient.post(`/games/${gameData.value.id}/rounds`, {turns})
             gameData.value = response.data.data.game
             return true
         } catch (error) {
@@ -155,7 +157,7 @@ export const useGameStore = defineStore('game', () => {
         if (!gameData.value) return false
 
         try {
-            const response = await axios.get(`${API_URL}/games/${gameData.value.id}`)
+            const response = await apiClient.get(`/games/${gameData.value.id}`)
             gameData.value = response.data.data.game
             return true
         } catch (error) {
@@ -187,10 +189,10 @@ export const useGameStore = defineStore('game', () => {
 
         categoriesLoading.value = true
         try {
-            const response = await axios.get(`${API_URL}/categories`)
+            const response = await apiClient.get(`/categories`)
             categories.value = response.data.data.categories
         } catch (error) {
-            console.error('خطا در دریافت دسته‌بندی‌ها:', error)
+            console.error(t('errors.GENERIC'), error)
         } finally {
             categoriesLoading.value = false
         }
@@ -228,8 +230,7 @@ export const useGameStore = defineStore('game', () => {
 
         if (currentPlayer.value && currentTurnElapsedSeconds.value > 0) {
             roundTurns.value.push({
-                player_id: currentPlayer.value.id,
-                elapsed_seconds: currentTurnElapsedSeconds.value
+                player_id: currentPlayer.value.id, elapsed_seconds: currentTurnElapsedSeconds.value
             })
         }
         currentTurnElapsedSeconds.value = 0
@@ -271,8 +272,7 @@ export const useGameStore = defineStore('game', () => {
 
         if (currentPlayer.value) {
             roundTurns.value.push({
-                player_id: currentPlayer.value.id,
-                elapsed_seconds: currentTurnElapsedSeconds.value
+                player_id: currentPlayer.value.id, elapsed_seconds: currentTurnElapsedSeconds.value
             })
         }
         try {

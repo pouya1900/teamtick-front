@@ -2,10 +2,11 @@
 import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
 import {useRouter} from 'vue-router'
 import {useGameStore} from '../stores/gameStore'
+import {useI18n} from 'vue-i18n'
 
+const {t} = useI18n()
 const router = useRouter()
 const gameStore = useGameStore()
-
 const switchCooldown = 15
 const switchRemaining = ref(switchCooldown)
 const isSwitchReady = computed(() => switchRemaining.value <= 0)
@@ -29,8 +30,8 @@ const roundDuration = computed(() => gameStore.roundDuration)
 const totalSlots = computed(() => activePlayers.value.length)
 
 const centerLabel = computed(() => {
-  if (isRoundEnding.value) return 'پایان دور'
-  if (!isRoundActive.value) return 'شروع'
+  if (isRoundEnding.value) return t('play.round_end')
+  if (!isRoundActive.value) return t('play.start')
   return currentWord.value?.word ?? currentWord.value?.text ?? '...'
 })
 
@@ -192,7 +193,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="screen play-screen" dir="rtl">
+  <div class="screen play-screen">
     <audio
         ref="stressAudio"
         src="/audio/stress-loop.mp3"
@@ -212,12 +213,12 @@ onBeforeUnmount(() => {
     <Transition name="boom">
       <div v-if="showRoundExplosion" class="round-finish-overlay">
         <div class="round-finish-burst"></div>
-        <div class="round-finish-text">دور تمام شد</div>
+        <div class="round-finish-text">{{ t('play.round_end') }}</div>
       </div>
     </Transition>
 
     <header class="page-header play-header">
-      <button class="back-btn play-back-btn" @click="goBack" aria-label="برگشت">
+      <button class="back-btn play-back-btn" @click="goBack" :aria-label="t('play.round_end')">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
           <polyline points="15 18 9 12 15 6"/>
         </svg>
@@ -251,7 +252,9 @@ onBeforeUnmount(() => {
       </div>
     </div>
     <div class="round-wrap">
-      <span>دور {{gameStore.gameData?.current_round_number + '/' + gameStore.gameData?.settings?.rounds_count}}</span>
+      <span>{{
+          t('play.round')
+        }} {{ gameStore.gameData?.current_round_number + '/' + gameStore.gameData?.settings?.rounds_count }}</span>
     </div>
 
     <div class="arena-wrap play-arena-wrap">
@@ -291,7 +294,7 @@ onBeforeUnmount(() => {
             </div>
 
             <span class="player-name play-player-name">
-              {{ slot.name || 'بازیکن' }}
+              {{ slot.name || t('common.player') }}
             </span>
           </div>
         </div>
@@ -310,10 +313,10 @@ onBeforeUnmount(() => {
         <span class="btn-switch-content">
           {{
             !isRoundActive
-                ? 'بعد از شروع دور فعال می‌شود'
+                ? t('play.switch_active_after')
                 : isSwitchReady
-                    ? 'تعویض کلمه'
-                    : `تعویض تا ${switchRemaining} ثانیه`
+                    ? t('play.switch_word')
+                    : t('play.switch_cooldown', {n: switchRemaining})
           }}
         </span>
       </button>

@@ -1,8 +1,10 @@
 <script setup>
-import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useGameStore } from '../stores/gameStore'
+import {computed, onMounted, ref} from 'vue'
+import {useRouter} from 'vue-router'
+import {useGameStore} from '../stores/gameStore'
+import {useI18n} from 'vue-i18n'
 
+const {t} = useI18n()
 const router = useRouter()
 const gameStore = useGameStore()
 const winAudio = ref(null)
@@ -16,14 +18,14 @@ const winnerTeam = computed(() => {
 })
 
 const winnerName = computed(() => {
-  return winner.value?.name ?? winnerTeam.value?.name ?? 'برنده'
+  return winner.value?.name ?? winnerTeam.value?.name ?? t('winner.winner')
 })
 
 const winnerColor = computed(() => {
   return winnerTeam.value?.color_hex ?? '#F59E0B'
 })
 
-const confettiPieces = Array.from({ length: 64 }, (_, i) => ({
+const confettiPieces = Array.from({length: 64}, (_, i) => ({
   id: i,
   left: `${Math.random() * 100}%`,
   delay: `${Math.random() * 1.8}s`,
@@ -36,12 +38,12 @@ const confettiPieces = Array.from({ length: 64 }, (_, i) => ({
 }))
 
 const goHome = () => {
-  router.replace({ name: 'home' })
+  router.replace({name: 'home'})
 }
 
 const startNewGame = () => {
   gameStore.clearGame()
-  router.replace({ name: 'setup' })
+  router.replace({name: 'setup'})
 }
 
 onMounted(async () => {
@@ -62,7 +64,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="screen winner-screen" dir="rtl">
+  <div class="screen winner-screen">
     <audio
         ref="winAudio"
         src="/audio/winner-short.mp3"
@@ -99,22 +101,22 @@ onMounted(async () => {
             <path d="M20 10h24v8c0 7.5-4.8 13.8-12 16-7.2-2.2-12-8.5-12-16v-8Z" fill="currentColor"/>
             <path d="M22 38h20" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
             <path d="M26 46h12" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-            <path d="M18 14H10c0 8 3.5 13 10 14" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M46 14h8c0 8-3.5 13-10 14" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M18 14H10c0 8 3.5 13 10 14" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+            <path d="M46 14h8c0 8-3.5 13-10 14" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+                  stroke-linejoin="round"/>
           </svg>
         </div>
       </div>
 
-      <p class="winner-kicker">قهرمان بازی</p>
+      <p class="winner-kicker">{{ t('winner.champion') }}</p>
       <h1 class="winner-title">
         <span class="winner-name" :style="{ color: winnerColor }">{{ winnerName }}</span>
-        <span>برنده شد</span>
+        <span>{{ t('winner.won') }}</span>
       </h1>
 
       <p class="winner-subtitle">
-        این دور با افتخار به پایان رسید و جام قهرمانی به
-        <strong>{{ winnerName }}</strong>
-        رسید.
+        {{ t('winner.description', {name: winnerName}) }}
       </p>
 
       <div class="winner-actions">

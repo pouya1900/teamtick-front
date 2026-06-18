@@ -182,7 +182,6 @@
     flex-direction: column;
     align-items: center;
     font-family: 'Vazirmatn', sans-serif;
-    direction: rtl;
     overflow: hidden;
     padding-bottom: 1.5rem;
 }
@@ -403,7 +402,9 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    flex-direction: column;
     padding: 0.5rem 1.5rem 0;
+    gap: 0.6rem;
 }
 
 .btn-continue {
@@ -1530,4 +1531,26 @@
     .winner-actions {
         grid-template-columns: 1fr;
     }
+}
+
+.lang_menu {
+    position: absolute;
+    top: 15px;
+    left: 5px;
+    z-index: 9;
+    direction: rtl;
+}
+
+.lang_menu span {
+    padding: 5px 10px;
+    color: #fff;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    margin-left: 6px;
+}
+
+.lang_menu span.active {
+    background: linear-gradient(135deg, #60A5FA 0%, #3B82F6 100%);
 }
