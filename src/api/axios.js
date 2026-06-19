@@ -1,10 +1,8 @@
 import axios from 'axios'
-import { i18n } from '../i18n'
-
-const API_URL = 'http://localhost:8000/api'
+import {i18n} from '../i18n'
 
 const apiClient = axios.create({
-    baseURL: API_URL,
+    baseURL: import.meta.env.VITE_API_URL,
 })
 
 apiClient.interceptors.request.use((config) => {
